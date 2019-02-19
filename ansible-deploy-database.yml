@@ -1,0 +1,20 @@
+# Clean the database
+---
+- name: Clean Opencast Deployment
+  hosts: all
+  become: true
+
+  pre_tasks:
+    - name: Stop Opencast
+      service: name={{target_service}} state=stopped
+      ignore_errors: yes # the service might not exist yet
+      register: result
+
+  roles:
+    - { role: clean_database,  when: "(result is succeeded)", become: true }
+
+  post_tasks:
+    - name: Start Opencast
+      service: name={{target_service}} state=started
+      ignore_errors: yes # the service might not exist yet
+

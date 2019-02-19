@@ -1,0 +1,25 @@
+---
+# file: group_vars/all
+ansible_connection: ssh
+
+# SSH username and password for the various servers > should be able to use sudo
+ansible_ssh_user: tmpl_ansible_ssh_user
+ansible_user: tmpl_ansible_ssh_user
+ansible_ssh_pass: tmpl_ansible_ssh_password
+ansible_pass: tmpl_ansible_ssh_password
+
+# These don't have to be explicitly imported by vars_files: they are autopopulated.
+
+# Variables for the dbservers group.
+# MySQL access
+db_user: tmpl_db_user
+db_pass: tmpl_db_pass
+
+db_config: tmpl_db_config
+
+# Opencast database access details
+oc_username: tmpl_oc_username
+oc_password: tmpl_oc_password
+
+sql_source: tmpl_sql_source
+sql_dest: tmpl_sql_dest

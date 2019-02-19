@@ -1,0 +1,12 @@
+.DS_Store
+*.tar.gz
+*.retry
+*.swp
+*.cfg
+!config/deploy-example.cfg
+!config/server-example.cfg
+config.sh
+files/tmp/
+group_vars/all
+group_vars/dbservers
+hosts/all

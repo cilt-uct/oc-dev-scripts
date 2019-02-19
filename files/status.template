@@ -1,0 +1,2 @@
+var {{ deploy_type }} = '{{ deploy_git }} - {{ deploy_version }}';
+var {{ deploy_type }}_date = '{{ deploy_date }}';

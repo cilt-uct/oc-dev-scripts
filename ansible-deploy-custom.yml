@@ -1,0 +1,38 @@
+# Clean the database
+---
+- name: Deploy Opencast to Custom Development Server
+  hosts: all
+  become: true
+
+  pre_tasks:
+   # - name: Stop Opencast Service
+   #   service: name={{ target_service }} state=stopped
+   #   when: stop_service
+   #   ignore_errors: yes # the service might not exist yet
+
+    - name: Copy allinone assembly
+      copy: src={{ allinone_src }} dest={{ allinone_dest }} group=opencast mode=0644
+
+    - name: Copy deploy script
+      copy: src={{ deploy_src }} dest={{ deploy_dest }} owner=opencast group=opencast mode=0775
+
+    # fire and forget
+    - name: Deploy assembly
+      shell: "{{ deploy_dest }}"
+      async: 500
+      poll: 0
+      register: run_deploy
+
+    - template:
+        src: "{{ status_template }}"
+        dest: "{{ status_dest }}"
+        owner: opencast
+        group: opencast
+        mode: 0664
+
+    - async_status: jid={{ run_deploy.ansible_job_id }}
+      register: log
+      until: log.finished
+      retries: 30
+
+    - debug: var=log
