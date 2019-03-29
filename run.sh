@@ -154,14 +154,17 @@ echo
 # Write the shell script that will run on the server to deploy opencast
 cp $FILES/deploy-template.sh $TMP_DIR/deploy.sh
 writeConfiguration $CONFIG/server-$DEPLOY_TYPE.cfg $TMP_DIR/deploy.sh
-sed -i -e "s;cfg_servername;$servername;" $TMP_DIR/deploy.sh
 
 src_folder=$(get_ini_value $CONFIG/server-$DEPLOY_TYPE.cfg all deploy_src_folder)
 src_version=$(xmlstarlet sel -t -v "/_:project/_:version" $src_folder/pom.xml)
 cfg_name=$(get_ini_value $CONFIG/server-$DEPLOY_TYPE.cfg all cfg_name)
 cfg_service=$(get_ini_value $CONFIG/server-$DEPLOY_TYPE.cfg all cfg_service)
 cfg_db_name=$(get_ini_value $CONFIG/server-$DEPLOY_TYPE.cfg all cfg_db_name)
+cfg_db_path=$(get_ini_value $CONFIG/server-$DEPLOY_TYPE.cfg all cfg_db_path)
 git_details=$(gitstatus $src_folder)
+
+sed -i -e "s;cfg_servername;$servername;" $TMP_DIR/deploy.sh
+sed -i -e "s;cfg_db_path;$cfg_db_path;" $TMP_DIR/deploy.sh
 
 echo "Deploying ($DEPLOY_TYPE - $src_version) from $src_folder: "
 $LIVE && ansible-playbook ansible-deploy-custom.yml -i hosts/all \
@@ -170,7 +173,7 @@ $LIVE && ansible-playbook ansible-deploy-custom.yml -i hosts/all \
 if [[ "$clean_db" == "y" ]]; then
   echo " - Deploying Database"
   $LIVE && ansible-playbook ansible-deploy-database.yml -i hosts/all \
-    --extra-vars "target_service=$cfg_service source_db=$cfg_name target_db=$cfg_name sql_source=$src_folder/docs/scripts/ddl/mysql5.sql sql_dest=/opt/$cfg_name.sql"
+    --extra-vars "target_service=$cfg_service source_db=$cfg_db_name target_db=$cfg_db_name sql_source=$src_folder/docs/scripts/ddl/mysql5.sql sql_dest=/opt/$cfg_db_name.sql"
 fi
 
 echo
