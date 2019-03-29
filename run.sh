@@ -170,7 +170,7 @@ $LIVE && ansible-playbook ansible-deploy-custom.yml -i hosts/all \
 if [[ "$clean_db" == "y" ]]; then
   echo " - Deploying Database"
   $LIVE && ansible-playbook ansible-deploy-database.yml -i hosts/all \
-   --extra-vars "target_service=$cfg_service source_db=$cfg_db_name target_db=$cfg_db_name target_db=$cfg_service sql_source=$src_folder/docs/scripts/ddl/mysql5.sql sql_dest=/opt/$cfg_name.sql"
+    --extra-vars "target_service=$cfg_service source_db=$cfg_name target_db=$cfg_name sql_source=$src_folder/docs/scripts/ddl/mysql5.sql sql_dest=/opt/$cfg_name.sql"
 fi
 
 echo
