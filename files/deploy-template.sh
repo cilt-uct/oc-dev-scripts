@@ -64,7 +64,8 @@ main() {
   replaceIn "#org.opencastproject.workflow.default.definition=schedule-and-upload" "org.opencastproject.workflow.default.definition=cfg_workflow" $working/etc/custom.properties
 
   replaceIn "org.opencastproject.db.ddl.generation=true" "org.opencastproject.db.ddl.generation=false" $working/etc/custom.properties
-  replaceIn "#org.opencastproject.db.vendor=MySQL" "org.opencastproject.db.vendor=MySQL" $working/etc/custom.properties
+  replaceIn "#org.opencastproject.db.jdbc.driver=org.mariadb.jdbc.Driver" "org.opencastproject.db.jdbc.driver=org.mariadb.jdbc.Driver" $working/etc/custom.properties
+  replaceIn "#org.opencastproject.db.vendor=MySQL" "org.opencastproject.db.vendor=MySQL" $working/etc/custom.properties # old
   replaceIn "#org.opencastproject.db.jdbc.driver=com.mysql.jdbc.Driver" "org.opencastproject.db.jdbc.driver=com.mysql.jdbc.Driver" $working/etc/custom.properties
   replaceIn "#org.opencastproject.db.jdbc.url=jdbc:mysql://localhost/opencast" "org.opencastproject.db.jdbc.url=jdbc:mysql://cfg_db_path" $working/etc/custom.properties
   replaceIn "#org.opencastproject.db.jdbc.user=opencast" "org.opencastproject.db.jdbc.user=cfg_db_user" $working/etc/custom.properties
@@ -79,9 +80,20 @@ main() {
   replaceIn "org.ops4j.pax.web.listening.addresses=127.0.0.1" "org.ops4j.pax.web.listening.addresses=0.0.0.0" $working/etc/org.ops4j.pax.web.cfg
   replaceIn "org.osgi.service.http.port=8080" "org.osgi.service.http.port=cfg_port" $working/etc/org.ops4j.pax.web.cfg
 
-  # elastic search
-  replaceIn "cluster.name: opencast" "cluster.name: cfg_search_name" $working/etc/index/adminui/settings.yml
-  replaceIn "cluster.name: opencast" "cluster.name: cfg_search_name" $working/etc/index/externalapi/settings.yml
+  # elastic search <= 8.x still have this
+  if [ -f "$working/etc/index/adminui/settings.yml" ]; then
+    replaceIn "cluster.name: opencast" "cluster.name: cfg_search_name" $working/etc/index/adminui/settings.yml
+  fi
+  if [ -f "$working/etc/index/externalapi/settings.yml" ]; then
+    replaceIn "cluster.name: opencast" "cluster.name: cfg_search_name" $working/etc/index/externalapi/settings.yml
+  fi
+
+  # Elastic search >= 9.x 
+  replaceIn "#org.opencastproject.elasticsearch.server.hostname=localhost" "org.opencastproject.elasticsearch.server.hostname=localhost" $working/etc/custom.properties
+  replaceIn "#org.opencastproject.elasticsearch.server.scheme=http" "org.opencastproject.elasticsearch.server.scheme=http" $working/etc/custom.properties
+  replaceIn "#org.opencastproject.elasticsearch.server.port=9200" "org.opencastproject.elasticsearch.server.port=cfg_elasticsearch_port" $working/etc/custom.properties
+  replaceIn "#org.opencastproject.elasticsearch.username=" "org.opencastproject.elasticsearch.username=elastic" $working/etc/custom.properties
+  replaceIn "#org.opencastproject.elasticsearch.password=" "org.opencastproject.elasticsearch.password=changeme" $working/etc/custom.properties
 
   echo " Done."
 
